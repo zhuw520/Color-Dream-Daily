@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩色梦幻日报</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        /* 报纸容器 */
+        .newspaper-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff0f5;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        @keyframes borderGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(255, 105, 180, 0.8), 0 0 30px rgba(255, 20, 147, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3); }
+        }
+        
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #ff69b4;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            margin: 0;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 5s ease infinite;
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 图片行样式 */
+        .image-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* 图片容器 */
+        .image-container {
+            width: 32%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+            transition: transform 0.3s;
+            min-height: 200px;
+            margin-bottom: 15px;
+        }
+        
+        .image-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* 笔记本样式 */
+        .notebook-line {
+            background-color: #fff;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ff69b4;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 彩虹文字 */
+        .rainbow-text {
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 5s ease infinite;
+            font-size: 1.2em;
+        }
+        
+        /* 视频容器 */
+        .video-container {
+            margin: 30px 0;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 普通文字 */
+        .normal-text {
+            margin: 20px 0;
+            padding: 10px;
+            line-height: 1.7;
+        }
+        
+        /* 音乐控制按钮 */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 105, 180, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+            animation: spin 4s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .music-control::before {
+            content: "♪";
+            font-size: 24px;
+            color: white;
+        }
+        
+        /* 水印样式 */
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(255, 105, 180, 0.5);
+            z-index: 100;
+            user-select: none;
+        }
+        
+        /* 全屏按钮样式 */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 105, 180, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 0 8px rgba(255, 20, 147, 0.3);
+        }
+        
+        .fullscreen-btn:hover {
+            background-color: rgba(255, 20, 147, 0.7);
+            transform: scale(1.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .image-container {
+                width: 100%;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+            
+            .fullscreen-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全屏按钮 -->
+    <div class="fullscreen-btn" id="fullscreenBtn">⛶</div>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control" id="musicControl"></div>
+    
+    <!-- 水印 -->
+    <div class="watermark" id="watermark">©2025 彩色梦幻日报</div>
+    
+    <div class="newspaper-container">
+        <div class="header">
+            <h1 class="title">彩色梦幻日报</h1>
+        </div>
+        
+        <!-- 图片行 - 已去除所有加载提示 -->
+        <div class="image-row">
+            <!-- 图片1 -->
+            <div class="image-container">
+                <img id="img1" src="a1.jpg" alt="图片1">
+            </div>
+            
+            <!-- 图片2 -->
+            <div class="image-container">
+                <img id="img2" src="a2.jpg" alt="图片2">
+            </div>
+            
+            <!-- 图片3 -->
+            <div class="image-container">
+                <img id="img3" src="https://b0.bdstatic.com/ugc/bgkvKRvokca0tJRRXPYzMAa960f17c7d9362f822a52553bfda567c.gif" alt="图片3">
+            </div>
+        </div>
+        
+        <!-- 笔记本样式内容区 -->
+        <div class="notebook-line">
+            <p class="rainbow-text">这里是第一行彩色文字内容，您可以在这里替换为您想要显示的文字。💖</p>
+        </div>
+        
+        <div class="notebook-line">
+            <p class="rainbow-text">这里是第二行彩色文字内容，您可以在这里替换为您想要显示的文字。✨</p>
+        </div>
+        
+        <div class="notebook-line">
+            <p class="rainbow-text">这里是第三行彩色文字内容，您可以在这里替换为您想要显示的文字。🌈</p>
+        </div>
+        
+        <!-- 视频播放器 -->
+        <div class="video-container">
+            <video id="myVideo" controls>
+                <source src="https://vd2.bdstatic.com/mda-rh4akd7s7v76t9a5/576p/h264/1754378994423525644/mda-rh4akd7s7v76t9a5.mp4?v_from_s=bdapp-resbox-suzhou" type="video/mp4">
+                您的浏览器不支持HTML5视频
+            </video>
+        </div>
+        
+        <!-- 普通文字内容 -->
+        <div class="normal-text">
+            <p>这里是普通文字内容第一行，您可以在这里替换为您想要显示的文字。</p>
+        </div>
+        
+        <div class="normal-text">
+            <p>这里是普通文字内容第二行，您可以在这里替换为您想要显示的文字。</p>
+        </div>
+        
+        <div class="normal-text">
+            <p>这里是普通文字内容第三行，您可以在这里替换为您想要显示的文字。</p>
+        </div>
+        
+        <div class="normal-text">
+            <p>𓀒𓀓哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈chenyumeng：🥵。</p>
+        </div>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <source src="a5.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // 音乐控制
+        const musicControl = document.getElementById('musicControl');
+        const bgMusic = document.getElementById('bgMusic');
+        const video = document.getElementById('myVideo');
+        
+        let musicPlaying = false;
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+            // 自动播放音乐
+            try {
+                bgMusic.muted = true;
+                const playPromise = bgMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        bgMusic.muted = false;
+                        musicPlaying = true;
+                        musicControl.style.animationPlayState = 'running';
+                    })
+                    .catch(error => {
+                        console.log('自动播放被阻止:', error);
+                        document.body.addEventListener('click', initAudio, { once: true });
+                    });
+                }
+            } catch (error) {
+                console.log('音乐播放初始化错误:', error);
+            }
+            
+            // 设置水印
+            setWatermark();
+        });
+        
+        function initAudio() {
+            bgMusic.play().then(() => {
+                musicPlaying = true;
+                musicControl.style.animationPlayState = 'running';
+            }).catch(error => {
+                console.log('播放失败:', error);
+            });
+        }
+        
+        musicControl.addEventListener('click', function() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicControl.style.animationPlayState = 'paused';
+            } else {
+                bgMusic.play();
+                musicControl.style.animationPlayState = 'running';
+            }
+            musicPlaying = !musicPlaying;
+        });
+        
+        function pauseMusic() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicControl.style.animationPlayState = 'paused';
+                musicPlaying = false;
+            }
+        }
+        
+        // 防止视频右键下载
+        video.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // 水印设置
+        function setWatermark() {
+            const watermark = document.getElementById('watermark');
+            // 加密部分(Base64编码)
+            const encrypted = "emh1Y2h1YW5nenVv"; // "操你妈逼的，看什么看"的Base64编码
+            // 解密并拼接
+            const decrypted = atob(encrypted);
+            watermark.textContent = "©2025" + decrypted;
+        }
+        
+        // 全屏功能
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+                    document.documentElement.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
+        
+        // 监听全屏变化
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+        
+        function updateFullscreenButton() {
+            if (document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.msFullscreenElement) {
+                fullscreenBtn.textContent = '⛶';
+            } else {
+                fullscreenBtn.textContent = '⛶';
+            }
+        }
+    </script>
+</body>
+</html>
